@@ -1,4 +1,5 @@
 package com.example.hw29;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -8,6 +9,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     private Map<String, Employee> employees = new HashMap<>();
     @Override
     public void addEmployee(Employee employee){
+        if(!userVerification(employee.getFirstName(), employee.getLastName()))
+            throw new CheckingForExceptions();
+
         if(employees.containsKey(employee.getFirstName() + employee.getLastName())){
             throw new EmployeeAlreadyAddedException();
         }
@@ -15,6 +19,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     @Override
     public  Employee findEmployee(String firstName, String lastName){
+        if(!userVerification(firstName,lastName))
+            throw new CheckingForExceptions();
+
         if(!employees.containsKey(firstName + lastName)){
             throw new EmployeeNotFoundException();
         }
@@ -22,6 +29,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     @Override
     public void removeEmployee(String firstName, String lastName){
+        if(!userVerification(firstName,lastName))
+            throw new CheckingForExceptions();
+
         if(!employees.containsKey(firstName+lastName)){
             throw new EmployeeNotFoundException();
         }
@@ -31,5 +41,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Collection<Employee> allEmployee() {
         return employees.values();
+    }
+    private boolean userVerification(String firstName, String lastName){
+        return StringUtils.isAlpha(firstName) && StringUtils.isAlpha(lastName);
     }
 }
